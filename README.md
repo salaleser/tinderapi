@@ -7,7 +7,7 @@
 - [x] Pass
 
 # Usage
-```
+```go
 client := tinderapi.New("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
 
 page, _ := client.GetRecommendations()
