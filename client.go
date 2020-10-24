@@ -17,9 +17,9 @@ const (
 type Client struct {
 	BaseURL    string
 	Status     string
+	HTTPClient *http.Client
 	token      string
 	endpoint   string
-	HTTPClient *http.Client
 }
 
 // New initializes and returns the Tinder API client
