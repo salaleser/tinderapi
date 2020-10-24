@@ -16,20 +16,31 @@ const (
 // Client represents the Tinder API client
 type Client struct {
 	BaseURL    string
+	Status     string
 	token      string
 	endpoint   string
 	HTTPClient *http.Client
 }
 
 // New initializes and returns the Tinder API client
-func New(token string) *Client {
-	return &Client{
+func New(token string) (*Client, error) {
+	client := &Client{
 		BaseURL: BaseURL,
 		token:   token,
 		HTTPClient: &http.Client{
 			Timeout: time.Minute,
 		},
 	}
+
+	page, err := client.GetProfile()
+	if err != nil {
+		return nil, err
+	}
+
+	client.Status = fmt.Sprintf("Client successfully initialized for user *%s* (`%s`)",
+		page.Data.Account.Username, page.Data.User.ID)
+
+	return client, nil
 }
 
 // GetUser returns Tinder user by given ID
