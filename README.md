@@ -8,7 +8,7 @@
 
 # Usage
 ```go
-client := tinderapi.New("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+client, _ := tinderapi.New("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
 
 page, _ := client.GetRecommendations()
 
