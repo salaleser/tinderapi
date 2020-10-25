@@ -3,6 +3,7 @@ package tinderapi
 import "time"
 
 type Instagram struct {
+	Username              string    `json:"username"`
 	LastFetchTime         time.Time `json:"last_fetch_time"`
 	CompletedInitialFetch bool      `json:"completed_initial_fetch"`
 	Photos                []struct {

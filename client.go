@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -32,19 +33,23 @@ func New(token string) (*Client, error) {
 		},
 	}
 
-	page, err := client.GetProfile()
+	x, err := client.GetProfile()
 	if err != nil {
 		return nil, err
 	}
 
-	client.Status = fmt.Sprintf("Client successfully initialized for user *%s* (`%s`)",
-		page.Data.Account.Username, page.Data.User.ID)
+	if x.Meta.Status != http.StatusOK {
+		return nil, fmt.Errorf("Cannot initialize the Tinder REST API client: %v", x)
+	}
+
+	client.Status = fmt.Sprintf("Success!\nUser name: %s\nUser ID: %s",
+		x.Data.Account.Username, x.Data.User.ID)
 
 	return client, nil
 }
 
 // GetUser returns Tinder user by given ID
-func (c *Client) GetUser(id string) (*UserV1, error) {
+func (c *Client) GetUser(id string) (*User, error) {
 	uri, err := url.Parse(fmt.Sprintf("%s/user/%s", c.BaseURL, id))
 	if err != nil {
 		return nil, fmt.Errorf("parse url: %v", err)
@@ -55,7 +60,7 @@ func (c *Client) GetUser(id string) (*UserV1, error) {
 		return nil, err
 	}
 
-	res := UserV1{}
+	res := User{}
 	if err = c.sendRequest(req, &res); err != nil {
 		return nil, fmt.Errorf("http request: %v", err)
 	}
@@ -74,7 +79,27 @@ func (c *Client) GetProfile() (*Page, error) {
 	if err != nil {
 		return nil, fmt.Errorf("parse query: %v", err)
 	}
-	query.Add("include", "account,user")
+	include := []string{
+		"account",
+		"boost",
+		"contact_cards",
+		"email_settings",
+		"instagram",
+		"likes",
+		"notifications",
+		"plus_control",
+		"products",
+		"purchase",
+		"readreceipts",
+		"swipenote",
+		"spotify",
+		"super_likes",
+		"tinder_u",
+		"travel",
+		"tutorials",
+		"user",
+	}
+	query.Add("include", strings.Join(include, ","))
 	uri.RawQuery = query.Encode()
 
 	req, err := http.NewRequest("GET", uri.String(), nil)
