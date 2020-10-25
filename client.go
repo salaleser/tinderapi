@@ -130,6 +130,26 @@ func (c *Client) Like(id string) (*Like, error) {
 	return &res, nil
 }
 
+// Pass passes user by given ID
+func (c *Client) Pass(id string) (*Pass, error) {
+	uri, err := url.Parse(fmt.Sprintf("%s/like/%s", c.BaseURL, id))
+	if err != nil {
+		return nil, fmt.Errorf("parse url: %v", err)
+	}
+
+	req, err := http.NewRequest("GET", uri.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res := Pass{}
+	if err = c.sendRequest(req, &res); err != nil {
+		return nil, fmt.Errorf("http request: %v", err)
+	}
+
+	return &res, nil
+}
+
 func (c *Client) sendRequest(req *http.Request, o interface{}) error {
 	req.Header.Add("X-Auth-Token", c.token)
 
