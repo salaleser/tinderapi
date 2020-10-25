@@ -1,10 +1,13 @@
 # Tinder REST API client
 
-- [x] Recommendations
-- [x] Profile
-- [x] User by ID
-- [x] Like
-- [x] Pass
+- [x] Get recommendations
+- [x] Get matches
+- [x] Get profile info
+- [x] Get user info
+- [x] Get match info
+- [x] Get message info
+- [x] Like user
+- [x] Pass user
 
 # Usage
 ```go

@@ -49,7 +49,7 @@ func New(token string) (*Client, error) {
 }
 
 // GetUser returns Tinder user by given ID
-func (c *Client) GetUser(id string) (*User, error) {
+func (c *Client) GetUser(id string) (*UserV1, error) {
 	uri, err := url.Parse(fmt.Sprintf("%s/user/%s", c.BaseURL, id))
 	if err != nil {
 		return nil, fmt.Errorf("parse url: %v", err)
@@ -60,7 +60,7 @@ func (c *Client) GetUser(id string) (*User, error) {
 		return nil, err
 	}
 
-	res := User{}
+	res := UserV1{}
 	if err = c.sendRequest(req, &res); err != nil {
 		return nil, fmt.Errorf("http request: %v", err)
 	}
@@ -121,6 +121,33 @@ func (c *Client) GetRecommendations() (*Page, error) {
 	if err != nil {
 		return nil, fmt.Errorf("parse url: %v", err)
 	}
+
+	req, err := http.NewRequest("GET", uri.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res := Page{}
+	if err = c.sendRequest(req, &res); err != nil {
+		return nil, fmt.Errorf("http request: %v", err)
+	}
+
+	return &res, nil
+}
+
+// GetMatches returns matches
+func (c *Client) GetMatches() (*Page, error) {
+	uri, err := url.Parse(fmt.Sprintf("%s/v2/matches", c.BaseURL))
+	if err != nil {
+		return nil, fmt.Errorf("parse url: %v", err)
+	}
+
+	query, err := url.ParseQuery(uri.RawQuery)
+	if err != nil {
+		return nil, fmt.Errorf("parse query: %v", err)
+	}
+	query.Add("count", "60")
+	uri.RawQuery = query.Encode()
 
 	req, err := http.NewRequest("GET", uri.String(), nil)
 	if err != nil {
