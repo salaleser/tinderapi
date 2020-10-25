@@ -132,7 +132,7 @@ func (c *Client) Like(id string) (*Like, error) {
 
 // Pass passes user by given ID
 func (c *Client) Pass(id string) (*Pass, error) {
-	uri, err := url.Parse(fmt.Sprintf("%s/like/%s", c.BaseURL, id))
+	uri, err := url.Parse(fmt.Sprintf("%s/pass/%s", c.BaseURL, id))
 	if err != nil {
 		return nil, fmt.Errorf("parse url: %v", err)
 	}
