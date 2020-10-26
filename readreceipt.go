@@ -1,5 +1,5 @@
 package tinderapi
 
 type Readreceipt struct {
-	Enabled bool `json:"enabled"`
+	Enabled bool `json:"enabled,omitempty"`
 }

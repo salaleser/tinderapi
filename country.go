@@ -1,7 +1,7 @@
 package tinderapi
 
 type Country struct {
-	Name   string `json:"name"`
-	Cc     string `json:"cc"`
-	Alpha3 string `json:"alpha3"`
+	Name   string `json:"name,omitempty"`
+	Cc     string `json:"cc,omitempty"`
+	Alpha3 string `json:"alpha3,omitempty"`
 }

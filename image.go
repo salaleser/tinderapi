@@ -1,7 +1,7 @@
 package tinderapi
 
 type Image struct {
-	Height int    `json:"height"`
-	Width  int    `json:"width"`
-	URL    string `json:"url"`
+	Height int    `json:"height,omitempty"`
+	Width  int    `json:"width,omitempty"`
+	URL    string `json:"url,omitempty"`
 }

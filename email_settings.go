@@ -1,10 +1,10 @@
 package tinderapi
 
 type EmailSettings struct {
-	Email         string `json:"email"`
+	Email         string `json:"email,omitempty"`
 	EmailSettings struct {
-		Promotions bool `json:"promotions"`
-		Messages   bool `json:"messages"`
-		NewMatches bool `json:"new_matches"`
-	} `json:"email_settings"`
+		Promotions bool `json:"promotions,omitempty"`
+		Messages   bool `json:"messages,omitempty"`
+		NewMatches bool `json:"new_matches,omitempty"`
+	} `json:"email_settings,omitempty"`
 }

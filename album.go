@@ -1,7 +1,7 @@
 package tinderapi
 
 type Album struct {
-	ID     string  `json:"id"`
-	Name   string  `json:"name"`
-	Images []Image `json:"images"`
+	ID     string  `json:"id,omitempty"`
+	Name   string  `json:"name,omitempty"`
+	Images []Image `json:"images,omitempty"`
 }

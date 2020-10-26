@@ -1,5 +1,5 @@
 package tinderapi
 
 type Badge struct {
-	Type string `json:"type"`
+	Type string `json:"type,omitempty"`
 }

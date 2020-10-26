@@ -3,8 +3,8 @@ package tinderapi
 type ExperimentInfo struct {
 	UserInterests struct {
 		SelectedInterests []struct {
-			ID   string `json:"id"`
-			Name string `json:"name"`
-		} `json:"selected_interests"`
-	} `json:"user_interests"`
+			ID   string `json:"id,omitempty"`
+			Name string `json:"name,omitempty"`
+		} `json:"selected_interests,omitempty"`
+	} `json:"user_interests,omitempty"`
 }

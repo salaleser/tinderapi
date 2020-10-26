@@ -1,5 +1,5 @@
 package tinderapi
 
 type Error struct {
-	Code int `json:"code"`
+	Code int `json:"code,omitempty"`
 }

@@ -1,6 +1,6 @@
 package tinderapi
 
 type City struct {
-	Name   string `json:"name"`
-	Region string `json:"region"`
+	Name   string `json:"name,omitempty"`
+	Region string `json:"region,omitempty"`
 }
