@@ -10,4 +10,9 @@ type Message struct {
 	To        string    `json:"to,omitempty"`
 	From      string    `json:"from,omitempty"`
 	Timestamp int       `json:"timestamp,omitempty"`
+	Media     struct {
+		Width  interface{} `json:"width,omitempty"`
+		Height interface{} `json:"height,omitempty"`
+	} `json:"media,omitempty"`
+	CreatedDate time.Time `json:"created_date,omitempty"`
 }

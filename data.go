@@ -4,6 +4,7 @@ type Data struct {
 	Account       Account       `json:"account,omitempty"`
 	Results       []Rec         `json:"results,omitempty"`
 	Matches       []Match       `json:"matches,omitempty"`
+	Messages      []Message     `json:"messages,omitempty"`
 	User          User          `json:"user,omitempty"`
 	Boost         Boost         `json:"boost,omitempty"`
 	ContactCards  ContactCards  `json:"contact_cards,omitempty"`
