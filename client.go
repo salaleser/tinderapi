@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -140,7 +141,7 @@ func (c *Client) GetRecommendations() (*Page, error) {
 }
 
 // GetMatches returns matches
-func (c *Client) GetMatches() (*Page, error) {
+func (c *Client) GetMatches(count int, message int) (*Page, error) {
 	uri, err := url.Parse(fmt.Sprintf("%s/v2/matches", c.BaseURL))
 	if err != nil {
 		return nil, fmt.Errorf("parse url: %v", err)
@@ -150,7 +151,8 @@ func (c *Client) GetMatches() (*Page, error) {
 	if err != nil {
 		return nil, fmt.Errorf("parse query: %v", err)
 	}
-	query.Add("count", "60")
+	query.Add("count", strconv.Itoa(count))
+	query.Add("message", strconv.Itoa(message))
 	uri.RawQuery = query.Encode()
 
 	req, err := http.NewRequest("GET", uri.String(), nil)
