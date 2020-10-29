@@ -19,6 +19,7 @@ const (
 type Client struct {
 	BaseURL    string
 	Status     string
+	SelfID     string
 	HTTPClient *http.Client
 	token      string
 	endpoint   string
@@ -45,6 +46,8 @@ func New(token string) (*Client, error) {
 
 	client.Status = fmt.Sprintf("Success!\nUser name: %s\nUser ID: %s",
 		x.Data.Account.Username, x.Data.User.ID)
+
+	client.SelfID = x.Data.User.ID
 
 	return client, nil
 }
