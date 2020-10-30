@@ -5,9 +5,10 @@
 - [x] Get profile info
 - [x] Get user info
 - [x] Get match info
-- [x] Get message info
+- [ ] Get message info
 - [x] Like user
 - [x] Pass user
+- [x] Send message
 
 # Usage
 ```go
