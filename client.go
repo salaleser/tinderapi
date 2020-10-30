@@ -198,8 +198,8 @@ func (c *Client) GetMessages(matchID string, count int) (*Page, error) {
 
 // SendMessage sends a message with given text text to matchID match ID
 func (c *Client) SendMessage(matchID string, text string) (*Message, error) {
-	uri, err := url.Parse(fmt.Sprintf("%s/user/matches/%s", matchID,
-		c.BaseURL))
+	uri, err := url.Parse(fmt.Sprintf("%s/user/matches/%s", c.BaseURL,
+		matchID))
 	if err != nil {
 		return nil, fmt.Errorf("parse url: %v", err)
 	}
