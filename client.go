@@ -169,9 +169,9 @@ func (c *Client) GetMatches(count int, message int) (*Page, error) {
 }
 
 // GetMessages returns messages by given matchID match ID
-func (c *Client) GetMessages(matchID string) (*Page, error) {
-	uri, err := url.Parse(fmt.Sprintf("%s/v2/matches/%s/messages", matchID,
-		c.BaseURL))
+func (c *Client) GetMessages(matchID string, count int) (*Page, error) {
+	uri, err := url.Parse(fmt.Sprintf("%s/v2/matches/%s/messages", c.BaseURL,
+		matchID))
 	if err != nil {
 		return nil, fmt.Errorf("parse url: %v", err)
 	}
@@ -180,7 +180,7 @@ func (c *Client) GetMessages(matchID string) (*Page, error) {
 	if err != nil {
 		return nil, fmt.Errorf("parse query: %v", err)
 	}
-	query.Add("count", "100")
+	query.Add("count", strconv.Itoa(count))
 	uri.RawQuery = query.Encode()
 
 	req, err := http.NewRequest("GET", uri.String(), nil)
