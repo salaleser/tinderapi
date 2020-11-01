@@ -23,8 +23,8 @@ type Data struct {
 	Travel        Travel        `json:"travel,omitempty"`
 	Tutorials     []string      `json:"tutorials,omitempty"`
 	NextPageToken string        `json:"next_page_token,omitempty"`
-	ID            string        `json:"_id"`
-	APIToken      string        `json:"api_token"`
-	RefreshToken  string        `json:"refresh_token"`
-	IsNewUser     bool          `json:"is_new_user"`
+	ID            string        `json:"_id,omitempty"`
+	APIToken      string        `json:"api_token,omitempty"`
+	RefreshToken  string        `json:"refresh_token,omitempty"`
+	IsNewUser     bool          `json:"is_new_user,omitempty"`
 }
