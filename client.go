@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/salaleser/tinderapi/internal/facebookapi"
 )
 
 const (
@@ -54,7 +56,7 @@ func New(token string) (*Client, error) {
 }
 
 // Login authorize the client via Facebook.
-func (c *Client) Login(facebookToken string, facebookID string) (*Page, error) {
+func (c *Client) Login(facebookToken string) (*Page, error) {
 	uri, err := url.Parse(fmt.Sprintf("%s/v2/auth/login/facebook", c.BaseURL))
 	if err != nil {
 		return nil, fmt.Errorf("parse url: %v", err)
@@ -65,8 +67,13 @@ func (c *Client) Login(facebookToken string, facebookID string) (*Page, error) {
 		FacebookID string `json:"facebook_id"`
 	}
 
-	message := &Credentials{Token: facebookToken, FacebookID: facebookID}
-	b, err := json.Marshal(message)
+	me, err := facebookapi.GetMe(facebookToken)
+	if err != nil {
+		return nil, fmt.Errorf("login: GetMe: %v", err)
+	}
+
+	credentials := &Credentials{Token: facebookToken, FacebookID: me.ID}
+	b, err := json.Marshal(credentials)
 	if err != nil {
 		return nil, err
 	}
