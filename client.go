@@ -25,34 +25,41 @@ type Client struct {
 	SelfID     string
 	HTTPClient *http.Client
 	token      string
-	endpoint   string
 }
 
-// New initializes and returns the Tinder API client
-func New(token string) (*Client, error) {
-	client := &Client{
+// NewClient authenticate and returns a Tinder REST API client via a Facebook
+// token.
+func NewClient(facebookToken string) (*Client, error) {
+	c := Client{
 		BaseURL: BaseURL,
-		token:   token,
 		HTTPClient: &http.Client{
 			Timeout: time.Minute,
 		},
 	}
 
-	x, err := client.GetProfile()
+	x, err := c.Login(facebookToken)
+	if err != nil {
+		return nil, err
+	}
+	c.token = x.Data.APIToken
+
+	profile, err := c.GetProfile()
 	if err != nil {
 		return nil, err
 	}
 
-	if x.Meta.Status != http.StatusOK {
-		return nil, fmt.Errorf("Cannot initialize the Tinder REST API client: %v", x)
+	if profile.Meta.Status != http.StatusOK {
+		return nil,
+			fmt.Errorf("Unable to authenticate a Tinder REST API client: %v",
+				profile)
 	}
 
-	client.Status = fmt.Sprintf("Success!\nUser name: %s\nUser ID: %s",
-		x.Data.Account.Username, x.Data.User.ID)
+	c.Status = fmt.Sprintf("**Success!**\n**User name:** %s\n**User ID:** %s",
+		profile.Data.Account.Username, profile.Data.User.ID)
 
-	client.SelfID = x.Data.User.ID
+	c.SelfID = profile.Data.User.ID
 
-	return client, nil
+	return &c, nil
 }
 
 // Login authorize the client via Facebook.
