@@ -18,7 +18,7 @@ const (
 	BaseURL = "https://api.gotinder.com"
 )
 
-// Client represents the Tinder API client
+// Client represents a Tinder REST API client
 type Client struct {
 	BaseURL    string
 	Status     string
@@ -27,9 +27,8 @@ type Client struct {
 	token      string
 }
 
-// NewClient authenticate and returns a Tinder REST API client via a Facebook
-// token.
-func NewClient(facebookToken string) (*Client, error) {
+// NewClient returns a Tinder REST API client.
+func NewClient() (*Client, error) {
 	c := Client{
 		BaseURL: BaseURL,
 		HTTPClient: &http.Client{
@@ -37,33 +36,11 @@ func NewClient(facebookToken string) (*Client, error) {
 		},
 	}
 
-	x, err := c.Login(facebookToken)
-	if err != nil {
-		return nil, err
-	}
-	c.token = x.Data.APIToken
-
-	profile, err := c.GetProfile()
-	if err != nil {
-		return nil, err
-	}
-
-	if profile.Meta.Status != http.StatusOK {
-		return nil,
-			fmt.Errorf("Unable to authenticate a Tinder REST API client: %v",
-				profile)
-	}
-
-	c.Status = fmt.Sprintf("**Success!**\n**User name:** %s\n**User ID:** %s",
-		profile.Data.Account.Username, profile.Data.User.ID)
-
-	c.SelfID = profile.Data.User.ID
-
 	return &c, nil
 }
 
-// Login authorize the client via Facebook.
-func (c *Client) Login(facebookToken string) (*Page, error) {
+// LoginFacebook authorizes a client via Facebook.
+func (c *Client) LoginFacebook(facebookToken string) (*Page, error) {
 	uri, err := url.Parse(fmt.Sprintf("%s/v2/auth/login/facebook", c.BaseURL))
 	if err != nil {
 		return nil, fmt.Errorf("parse url: %v", err)
@@ -84,7 +61,8 @@ func (c *Client) Login(facebookToken string) (*Page, error) {
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", uri.String(), bytes.NewBuffer(b))
+	req, err := http.NewRequest(http.MethodPost, uri.String(),
+		bytes.NewBuffer(b))
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +73,47 @@ func (c *Client) Login(facebookToken string) (*Page, error) {
 		return nil, fmt.Errorf("http request: %v", err)
 	}
 
+	c.token = res.Data.APIToken
+
+	profile, err := c.GetProfile()
+	if err != nil {
+		return nil, err
+	}
+
+	if profile.Meta.Status != http.StatusOK {
+		return nil,
+			fmt.Errorf("Unable to authenticate a Tinder REST API client: %v",
+				profile)
+	}
+
+	c.Status = fmt.Sprintf("*Success!*\n*User name:* %s\n*User ID:* %s",
+		profile.Data.Account.Username, profile.Data.User.ID)
+
+	c.SelfID = profile.Data.User.ID
+
 	return &res, nil
+}
+
+// Login authorizes a client via Tinder token.
+func (c *Client) Login(token string) error {
+	c.token = token
+
+	profile, err := c.GetProfile()
+	if err != nil {
+		return err
+	}
+
+	if profile.Meta.Status != http.StatusOK {
+		return fmt.Errorf(
+			"Unable to authenticate a Tinder REST API client: %v", profile)
+	}
+
+	c.Status = fmt.Sprintf("*Success!*\n*User name:* %s\n*User ID:* %s",
+		profile.Data.Account.Username, profile.Data.User.ID)
+
+	c.SelfID = profile.Data.User.ID
+
+	return nil
 }
 
 // GetUser returns Tinder user by given ID
