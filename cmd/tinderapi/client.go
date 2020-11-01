@@ -184,6 +184,32 @@ func (c *Client) GetProfile() (*structs.Page, error) {
 	return &res, nil
 }
 
+// SetProfile sets profile information.
+func (c *Client) SetProfile(user structs.User) (*structs.Page, error) {
+	uri, err := url.Parse(fmt.Sprintf("%s/v2/profile", c.BaseURL))
+	if err != nil {
+		return nil, fmt.Errorf("parse url: %v", err)
+	}
+
+	b, err := json.Marshal(user)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest(http.MethodPost, uri.String(),
+		bytes.NewBuffer(b))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Content-Type", "application/json")
+
+	res := structs.Page{}
+	if err = c.sendRequest(req, &res); err != nil {
+		return nil, fmt.Errorf("http request: %v", err)
+	}
+
+	return &res, nil
+}
+
 // GetRecommendations returns recommendations
 func (c *Client) GetRecommendations() (*structs.Page, error) {
 	uri, err := url.Parse(fmt.Sprintf("%s/v2/recs/core", c.BaseURL))
