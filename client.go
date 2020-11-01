@@ -53,6 +53,37 @@ func New(token string) (*Client, error) {
 	return client, nil
 }
 
+// Login authorize the client via Facebook.
+func (c *Client) Login(facebookToken string, facebookID string) (*Page, error) {
+	uri, err := url.Parse(fmt.Sprintf("%s/v2/auth/login/facebook", c.BaseURL))
+	if err != nil {
+		return nil, fmt.Errorf("parse url: %v", err)
+	}
+
+	type Credentials struct {
+		Token      string `json:"token"`
+		FacebookID string `json:"facebook_id"`
+	}
+
+	message := &Credentials{Token: facebookToken, FacebookID: facebookID}
+	b, err := json.Marshal(message)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest("POST", uri.String(), bytes.NewBuffer(b))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Content-Type", "application/json")
+
+	res := Page{}
+	if err = c.sendRequest(req, &res); err != nil {
+		return nil, fmt.Errorf("http request: %v", err)
+	}
+
+	return &res, nil
+}
+
 // GetUser returns Tinder user by given ID
 func (c *Client) GetUser(id string) (*UserV1, error) {
 	uri, err := url.Parse(fmt.Sprintf("%s/user/%s", c.BaseURL, id))
