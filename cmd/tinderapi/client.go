@@ -29,15 +29,13 @@ type Client struct {
 }
 
 // NewClient returns a Tinder REST API client.
-func NewClient() (*Client, error) {
-	c := Client{
+func NewClient() *Client {
+	return &Client{
 		BaseURL: BaseURL,
 		HTTPClient: &http.Client{
 			Timeout: time.Minute,
 		},
 	}
-
-	return &c, nil
 }
 
 // LoginFacebook authorizes a client via Facebook.
@@ -124,7 +122,7 @@ func (c *Client) GetUser(id string) (*structs.UserV1, error) {
 		return nil, fmt.Errorf("parse url: %v", err)
 	}
 
-	req, err := http.NewRequest("GET", uri.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, uri.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -171,7 +169,7 @@ func (c *Client) GetProfile() (*structs.Page, error) {
 	query.Add("include", strings.Join(include, ","))
 	uri.RawQuery = query.Encode()
 
-	req, err := http.NewRequest("GET", uri.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, uri.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -217,7 +215,7 @@ func (c *Client) GetRecommendations() (*structs.Page, error) {
 		return nil, fmt.Errorf("parse url: %v", err)
 	}
 
-	req, err := http.NewRequest("GET", uri.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, uri.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -245,7 +243,7 @@ func (c *Client) GetMatches(count int, message int) (*structs.Page, error) {
 	query.Add("message", strconv.Itoa(message))
 	uri.RawQuery = query.Encode()
 
-	req, err := http.NewRequest("GET", uri.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, uri.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -273,7 +271,7 @@ func (c *Client) GetMessages(matchID string, count int) (*structs.Page, error) {
 	query.Add("count", strconv.Itoa(count))
 	uri.RawQuery = query.Encode()
 
-	req, err := http.NewRequest("GET", uri.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, uri.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -299,7 +297,7 @@ func (c *Client) SendMessage(matchID string, text string) (*structs.Message, err
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", uri.String(), bytes.NewBuffer(b))
+	req, err := http.NewRequest(http.MethodPost, uri.String(), bytes.NewBuffer(b))
 	if err != nil {
 		return nil, err
 	}
@@ -320,7 +318,7 @@ func (c *Client) Like(id string) (*structs.Like, error) {
 		return nil, fmt.Errorf("parse url: %v", err)
 	}
 
-	req, err := http.NewRequest("GET", uri.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, uri.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -340,7 +338,7 @@ func (c *Client) Pass(id string) (*structs.Pass, error) {
 		return nil, fmt.Errorf("parse url: %v", err)
 	}
 
-	req, err := http.NewRequest("GET", uri.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, uri.String(), nil)
 	if err != nil {
 		return nil, err
 	}
