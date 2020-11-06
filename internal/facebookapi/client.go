@@ -12,6 +12,15 @@ type Me struct {
 	ID   string `json:"id"`
 }
 
+type Error struct {
+	Error struct {
+		Message   string `json:"message"`
+		Type      string `json:"type"`
+		Code      int    `json:"code"`
+		FbtraceID string `json:"fbtrace_id"`
+	} `json:"error"`
+}
+
 func GetMe(accessToken string) (*Me, error) {
 	uri, err := url.Parse("https://graph.facebook.com/me")
 	if err != nil {
@@ -35,13 +44,19 @@ func GetMe(accessToken string) (*Me, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	defer res.Body.Close()
 
-	o := Me{}
-	if err = json.NewDecoder(res.Body).Decode(&o); err != nil {
-		return nil, err
+	if res.StatusCode == http.StatusOK {
+		o := &Me{}
+		if err = json.NewDecoder(res.Body).Decode(o); err != nil {
+			return nil, err
+		}
+		return o, nil
 	}
 
-	return &o, nil
+	e := &Error{}
+	if err = json.NewDecoder(res.Body).Decode(e); err != nil {
+		return nil, err
+	}
+	return nil, fmt.Errorf("facebookapi.GetMe: %#v", e)
 }

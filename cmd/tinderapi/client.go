@@ -39,10 +39,10 @@ func NewClient() *Client {
 }
 
 // LoginFacebook authorizes a client via Facebook.
-func (c *Client) LoginFacebook(facebookToken string) (*structs.Page, error) {
+func (c *Client) LoginFacebook(facebookToken string) error {
 	uri, err := url.Parse(fmt.Sprintf("%s/v2/auth/login/facebook", c.BaseURL))
 	if err != nil {
-		return nil, fmt.Errorf("parse url: %v", err)
+		return fmt.Errorf("parse url: %v", err)
 	}
 
 	type Credentials struct {
@@ -52,36 +52,35 @@ func (c *Client) LoginFacebook(facebookToken string) (*structs.Page, error) {
 
 	me, err := facebookapi.GetMe(facebookToken)
 	if err != nil {
-		return nil, fmt.Errorf("login: GetMe: %v", err)
+		return fmt.Errorf("login: %v", err)
 	}
 
 	credentials := &Credentials{Token: facebookToken, FacebookID: me.ID}
 	b, err := json.Marshal(credentials)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	req, err := http.NewRequest(http.MethodPost, uri.String(),
 		bytes.NewBuffer(b))
 	if err != nil {
-		return nil, err
+		return err
 	}
 	req.Header.Add("Content-Type", "application/json")
 
-	res := structs.Page{}
-	if err = c.sendRequest(req, &res); err != nil {
-		return nil, fmt.Errorf("http request: %v", err)
+	res := &structs.Page{}
+	if err = c.sendRequest(req, res); err != nil {
+		return fmt.Errorf("http request: %v", err)
 	}
 
 	c.token = res.Data.APIToken
 
 	profile, err := c.GetProfile()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	if profile.Meta.Status != http.StatusOK {
-		return nil,
-			fmt.Errorf("Unable to authenticate a Tinder REST API client: %v",
+		return fmt.Errorf("Unable to authenticate a Tinder REST API client: %v",
 				profile)
 	}
 
@@ -90,7 +89,7 @@ func (c *Client) LoginFacebook(facebookToken string) (*structs.Page, error) {
 
 	c.SelfID = profile.Data.User.ID
 
-	return &res, nil
+	return nil
 }
 
 // Login authorizes a client via Tinder token.
@@ -127,12 +126,12 @@ func (c *Client) GetUser(id string) (*structs.UserV1, error) {
 		return nil, err
 	}
 
-	res := structs.UserV1{}
-	if err = c.sendRequest(req, &res); err != nil {
+	res := &structs.UserV1{}
+	if err = c.sendRequest(req, res); err != nil {
 		return nil, fmt.Errorf("http request: %v", err)
 	}
 
-	return &res, nil
+	return res, nil
 }
 
 // GetProfile returns profile information
@@ -174,12 +173,12 @@ func (c *Client) GetProfile() (*structs.Page, error) {
 		return nil, err
 	}
 
-	res := structs.Page{}
-	if err = c.sendRequest(req, &res); err != nil {
+	res := &structs.Page{}
+	if err = c.sendRequest(req, res); err != nil {
 		return nil, fmt.Errorf("http request: %v", err)
 	}
 
-	return &res, nil
+	return res, nil
 }
 
 // SetProfile sets profile information.
@@ -200,12 +199,12 @@ func (c *Client) SetProfile(user structs.User) (*structs.Page, error) {
 	}
 	req.Header.Add("Content-Type", "application/json")
 
-	res := structs.Page{}
-	if err = c.sendRequest(req, &res); err != nil {
+	res := &structs.Page{}
+	if err = c.sendRequest(req, res); err != nil {
 		return nil, fmt.Errorf("http request: %v", err)
 	}
 
-	return &res, nil
+	return res, nil
 }
 
 // GetRecommendations returns recommendations
@@ -220,12 +219,12 @@ func (c *Client) GetRecommendations() (*structs.Page, error) {
 		return nil, err
 	}
 
-	res := structs.Page{}
-	if err = c.sendRequest(req, &res); err != nil {
+	res := &structs.Page{}
+	if err = c.sendRequest(req, res); err != nil {
 		return nil, fmt.Errorf("http request: %v", err)
 	}
 
-	return &res, nil
+	return res, nil
 }
 
 // GetMatches returns matches
@@ -248,12 +247,12 @@ func (c *Client) GetMatches(count int, message int) (*structs.Page, error) {
 		return nil, err
 	}
 
-	res := structs.Page{}
-	if err = c.sendRequest(req, &res); err != nil {
+	res := &structs.Page{}
+	if err = c.sendRequest(req, res); err != nil {
 		return nil, fmt.Errorf("http request: %v", err)
 	}
 
-	return &res, nil
+	return res, nil
 }
 
 // GetMessages returns messages by given matchID match ID
@@ -276,12 +275,12 @@ func (c *Client) GetMessages(matchID string, count int) (*structs.Page, error) {
 		return nil, err
 	}
 
-	res := structs.Page{}
-	if err = c.sendRequest(req, &res); err != nil {
+	res := &structs.Page{}
+	if err = c.sendRequest(req, res); err != nil {
 		return nil, fmt.Errorf("http request: %v", err)
 	}
 
-	return &res, nil
+	return res, nil
 }
 
 // SendMessage sends a message with given text text to matchID match ID
@@ -303,12 +302,12 @@ func (c *Client) SendMessage(matchID string, text string) (*structs.Message, err
 	}
 	req.Header.Add("Content-Type", "application/json")
 
-	res := structs.Message{}
-	if err = c.sendRequest(req, &res); err != nil {
+	res := &structs.Message{}
+	if err = c.sendRequest(req, res); err != nil {
 		return nil, fmt.Errorf("http request: %v", err)
 	}
 
-	return &res, nil
+	return res, nil
 }
 
 // Like likes a user by given user ID id
@@ -323,12 +322,12 @@ func (c *Client) Like(id string) (*structs.Like, error) {
 		return nil, err
 	}
 
-	res := structs.Like{}
-	if err = c.sendRequest(req, &res); err != nil {
+	res := &structs.Like{}
+	if err = c.sendRequest(req, res); err != nil {
 		return nil, fmt.Errorf("http request: %v", err)
 	}
 
-	return &res, nil
+	return res, nil
 }
 
 // Pass passes user by given ID
@@ -343,12 +342,12 @@ func (c *Client) Pass(id string) (*structs.Pass, error) {
 		return nil, err
 	}
 
-	res := structs.Pass{}
-	if err = c.sendRequest(req, &res); err != nil {
+	res := &structs.Pass{}
+	if err = c.sendRequest(req, res); err != nil {
 		return nil, fmt.Errorf("http request: %v", err)
 	}
 
-	return &res, nil
+	return res, nil
 }
 
 func (c *Client) sendRequest(req *http.Request, o interface{}) error {
@@ -358,7 +357,6 @@ func (c *Client) sendRequest(req *http.Request, o interface{}) error {
 	if err != nil {
 		return err
 	}
-
 	defer res.Body.Close()
 
 	if err = json.NewDecoder(res.Body).Decode(&o); err != nil {
