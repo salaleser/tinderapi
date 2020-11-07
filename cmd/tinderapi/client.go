@@ -25,7 +25,7 @@ type Client struct {
 	Status     string
 	SelfID     string
 	HTTPClient *http.Client
-	token      string
+	Token      string
 }
 
 // NewClient returns a Tinder REST API client.
@@ -72,7 +72,7 @@ func (c *Client) LoginFacebook(facebookToken string) error {
 		return fmt.Errorf("http request: %v", err)
 	}
 
-	c.token = res.Data.APIToken
+	c.Token = res.Data.APIToken
 
 	profile, err := c.GetProfile()
 	if err != nil {
@@ -94,7 +94,7 @@ func (c *Client) LoginFacebook(facebookToken string) error {
 
 // Login authorizes a client via Tinder token.
 func (c *Client) Login(token string) error {
-	c.token = token
+	c.Token = token
 
 	profile, err := c.GetProfile()
 	if err != nil {
@@ -351,7 +351,7 @@ func (c *Client) Pass(id string) (*structs.Pass, error) {
 }
 
 func (c *Client) sendRequest(req *http.Request, o interface{}) error {
-	req.Header.Add("X-Auth-Token", c.token)
+	req.Header.Add("X-Auth-Token", c.Token)
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
