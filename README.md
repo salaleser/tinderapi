@@ -3,6 +3,7 @@
 - [x] Get recommendations
 - [x] Get matches
 - [x] Get profile info
+- [x] Set profile info
 - [x] Get user info
 - [x] Get match info
 - [ ] Get message info
@@ -10,24 +11,33 @@
 - [x] Pass user
 - [x] Send message
 
-# Usage
+# Autolike example
 ```go
-client, _ := tinderapi.New("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+package main
 
-page, _ := client.GetRecommendations()
+import (
+    "github.com/salaleser/tinderapi/cmd/tinderapi"
+    "os"
+    "time"
+)
 
-for i, v := range page.Data.Results {
-	fmt.Printf(
-		"%d: %s (%d) [%s]\n",
-		i+1,
-		v.User.Name,
-		time.Now().Year()-v.User.BirthDate.Year(),
-		v.User.ID,
-	)
 
-	like, _ := client.Like(v.User.ID)
-	fmt.Printf("%v\n\n", like)
+func main() {
+    c := tinderapi.NewClient()
 
-	time.Sleep(time.Millisecond * 100)
+    c.Login(os.Getenv("TINDER_TOKEN"))
+    
+    for i := 100; i > 0; i-- {
+        x, _ := c.GetRecommendations()
+
+        for _, r := range x.Data.Results {
+            like, _ := c.Like(r.User.ID)
+            if like.LikesRemaining == 0 {
+                i = 0
+            }
+        }
+
+        time.Sleep(time.Millisecond * 50)
+    }
 }
 ```
