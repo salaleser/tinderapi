@@ -22,7 +22,6 @@ const (
 // Client represents a Tinder REST API client
 type Client struct {
 	BaseURL    string
-	Status     string
 	SelfID     string
 	Username   string
 	HTTPClient *http.Client
@@ -84,10 +83,8 @@ func (c *Client) LoginFacebook(facebookToken string) error {
 			profile)
 	}
 
-	c.Status = fmt.Sprintf("*Success!*\n*User name:* %s\n*User ID:* %s",
-		profile.Data.Account.Username, profile.Data.User.ID)
-	c.Username = profile.Data.User.Username
-	c.SelfID = profile.Data.User.ID
+	c.Username = profile.Data.Account.Username
+	c.SelfID = *profile.Data.User.ID
 
 	return nil
 }
@@ -106,10 +103,8 @@ func (c *Client) Login(token string) error {
 			"unable to authenticate a Tinder REST API client: %v", profile)
 	}
 
-	c.Status = fmt.Sprintf("*Success!*\n*User name:* %s\n*User ID:* %s",
-		profile.Data.Account.Username, profile.Data.User.ID)
-
-	c.SelfID = profile.Data.User.ID
+	c.Username = profile.Data.Account.Username
+	c.SelfID = *profile.Data.User.ID
 
 	return nil
 }
