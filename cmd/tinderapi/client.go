@@ -24,6 +24,7 @@ type Client struct {
 	BaseURL    string
 	Status     string
 	SelfID     string
+	Username   string
 	HTTPClient *http.Client
 	Token      string
 }
@@ -71,7 +72,6 @@ func (c *Client) LoginFacebook(facebookToken string) error {
 	if err = c.sendRequest(req, res); err != nil {
 		return fmt.Errorf("http request: %v", err)
 	}
-
 	c.Token = *res.Data.APIToken
 
 	profile, err := c.GetProfile()
@@ -86,7 +86,7 @@ func (c *Client) LoginFacebook(facebookToken string) error {
 
 	c.Status = fmt.Sprintf("*Success!*\n*User name:* %s\n*User ID:* %s",
 		profile.Data.Account.Username, profile.Data.User.ID)
-
+	c.Username = profile.Data.User.Username
 	c.SelfID = profile.Data.User.ID
 
 	return nil
