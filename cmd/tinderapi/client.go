@@ -99,8 +99,8 @@ func (c *Client) Login(token string) error {
 	}
 
 	if profile.Meta.Status != http.StatusOK {
-		return fmt.Errorf(
-			"unable to authenticate a Tinder REST API client: %v", profile)
+		return fmt.Errorf("unable to authenticate a Tinder REST API client:"+
+			" (status code %d) %#v", profile.Meta.Status, *profile.Error)
 	}
 
 	c.Username = profile.Data.Account.Username
