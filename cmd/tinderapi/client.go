@@ -80,7 +80,7 @@ func (c *Client) LoginFacebook(facebookToken string) error {
 
 	if profile.Meta.Status != http.StatusOK {
 		return fmt.Errorf("unable to authenticate a Tinder REST API client: %v",
-			profile)
+			*profile.Error)
 	}
 
 	c.Username = profile.Data.Account.Username
