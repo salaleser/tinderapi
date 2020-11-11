@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -352,7 +353,12 @@ func (c *Client) sendRequest(req *http.Request, o interface{}) error {
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer func() {
+		err := res.Body.Close()
+		if err != nil {
+			log.Printf("res close: %v", err)
+		}
+	}()
 
 	if res.StatusCode != http.StatusOK {
 		return fmt.Errorf("status %q: %v", res.Status, err)
