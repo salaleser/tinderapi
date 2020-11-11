@@ -73,7 +73,12 @@ func (c *Client) LoginFacebook(facebookToken string) error {
 	if err = c.sendRequest(req, res); err != nil {
 		return fmt.Errorf("http request: %v", err)
 	}
-	c.Token = *res.Data.APIToken
+
+	if *res.Data.IsNewUser {
+		c.Token = *res.Data.OnboardingToken
+	} else {
+		c.Token = *res.Data.APIToken
+	}
 
 	profile, err := c.GetProfile()
 	if err != nil {
