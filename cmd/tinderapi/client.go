@@ -354,6 +354,10 @@ func (c *Client) sendRequest(req *http.Request, o interface{}) error {
 	}
 	defer res.Body.Close()
 
+	if res.StatusCode != http.StatusOK {
+		return fmt.Errorf("status %q: %v", res.Status, err)
+	}
+
 	if err = json.NewDecoder(res.Body).Decode(&o); err != nil {
 		return err
 	}
