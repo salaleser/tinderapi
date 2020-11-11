@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -361,7 +362,12 @@ func (c *Client) sendRequest(req *http.Request, o interface{}) error {
 	}()
 
 	if res.StatusCode != http.StatusOK {
-		return fmt.Errorf("status %q: %v", res.Status, err)
+		b, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			log.Print(err)
+		}
+		return fmt.Errorf("status %q\nResponse body: %q", res.Status,
+			string(b))
 	}
 
 	if err = json.NewDecoder(res.Body).Decode(&o); err != nil {
